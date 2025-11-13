@@ -1,53 +1,127 @@
-name: Build Slipstream Android (arm64)
-
-on:
-  workflow_dispatch:
+env:
+  BUILD_TYPE: Release
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - name: Install build dependencies
         run: |
-          sudo apt update
-          sudo apt install -y ninja-build cmake unzip wget pkg-config
+          sudo apt-get update
+          sudo apt install -y pkg-config libssl-dev ninja-build
 
-      - name: Download Android NDK r27b
+      - name: Configure CMake
         run: |
-          wget -q https://dl.google.com/android/repository/android-ndk-r27b-linux.zip
-          unzip -q android-ndk-r27b-linux.zip
-          mv android-ndk-r27b $HOME/android-ndk
-
-      - name: Configure (CMake)
-        run: |
-          cmake -S . -B build-android \
+          cmake \
+            -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+            -DCMAKE_MAKE_PROGRAM=ninja \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
             -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=$HOME/android-ndk/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI=arm64-v8a \
-            -DANDROID_PLATFORM=24 \
-            -DPICOTLS_USE_OPENSSL=OFF \
-            -DPICOTLS_USE_MINICRYPTO=ON \
-            -DCMAKE_BUILD_TYPE=Release
+            -S ${{github.workspace}} \
+            -B ${{github.workspace}}/build
 
-      - name: Build (Ninja)
+      - name: Build with CMake
         run: |
-          ninja -C build-android
+          cmake \
+            --build ${{github.workspace}}/build \
+            -j $(nproc) \
+            --target slipstream-client slipstream-server
 
-      - name: Collect artifacts
+      - name: Rename Binaries
         run: |
-          mkdir -p artifacts
-          cp build-android/slipstream-client artifacts/slipstream-client-arm64 || true
-          cp build-android/slipstream-server artifacts/slipstream-server-arm64 || true
-          ls -lh artifacts || true
+          VERSION=${{ github.ref_name }}
+          mv ${{github.workspace}}/build/slipstream-client ${{github.workspace}}/build/slipstream-client-${VERSION}-linux-x86_64
+          mv ${{github.workspace}}/build/slipstream-server ${{github.workspace}}/build/slipstream-server-${VERSION}-linux-x86_64
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
         with:
-          name: slipstream-android-arm64
-          path: artifacts/*
+          draft: true
+          generate_release_notes: true
+          files: |
+            build/slipstream-client-*
+            build/slipstream-server-*
+
+  docker-build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata (tags, labels) for Docker (server)
+        id: meta-server
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-server
+
+      - name: Extract metadata (tags, labels) for Docker (client)
+        id: meta-client
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-client
+
+      - name: Build and push Docker image (server)
+        id: push-server
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta-server.outputs.tags }}
+          labels: ${{ steps.meta-server.outputs.labels }}
+          target: server
+
+      - name: Build and push Docker image (client)
+        id: push-client
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta-client.outputs.tags }}
+          labels: ${{ steps.meta-client.outputs.labels }}
+          target: client
+
+      - name: Generate artifact attestation (server)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-server
+          subject-digest: ${{ steps.push-server.outputs.digest }}
+          push-to-registry: true
+
+      - name: Generate artifact attestation (client)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-client
+          subject-digest: ${{ steps.push-client.outputs.digest }}
+          push-to-registry: true
