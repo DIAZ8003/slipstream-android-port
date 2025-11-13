@@ -1,0 +1,21 @@
+# ninja log v7
+0	65	1763046976611461237	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-mkdir	482fe8e9f15ef176
+0	65	1763046976611461237	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-mkdir	482fe8e9f15ef176
+65	2248	1763046978795468174	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-download	2f19c3c4a2ffe865
+65	2248	1763046978795468174	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-download	2f19c3c4a2ffe865
+2248	2267	1763046978795468174	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-update	b2e69f682a1d06cd
+2248	2267	1763046978795468174	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-update	b2e69f682a1d06cd
+2267	2284	1763046978831468288	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-patch	c3e516fb2a384b39
+2267	2284	1763046978831468288	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-patch	c3e516fb2a384b39
+2284	2300	1763046978847468339	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-configure	e0bb4f4a714d902
+2284	2300	1763046978847468339	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-configure	e0bb4f4a714d902
+2300	2316	1763046978863468390	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-build	9863aac6bf6b4ffb
+2300	2316	1763046978863468390	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-build	9863aac6bf6b4ffb
+2316	2333	1763046978879468441	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-install	70e4fdec76090996
+2316	2333	1763046978879468441	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-install	70e4fdec76090996
+2333	2349	1763046978895468492	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-test	73eacacb8cb656f9
+2333	2349	1763046978895468492	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-test	73eacacb8cb656f9
+2349	2376	1763046978923468581	CMakeFiles/picotls-populate-complete	d2b99e29863fb6c3
+2349	2376	1763046978923468581	picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-done	d2b99e29863fb6c3
+2349	2376	1763046978923468581	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/CMakeFiles/picotls-populate-complete	d2b99e29863fb6c3
+2349	2376	1763046978923468581	/root/slip_android/slipstream-0.0.1/android/build-arm64/_deps/picotls-subbuild/picotls-populate-prefix/src/picotls-populate-stamp/picotls-populate-done	d2b99e29863fb6c3

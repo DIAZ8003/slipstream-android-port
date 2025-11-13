@@ -1,0 +1,97 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /root/slip_android/slipstream-0.0.1/android/build-arm64/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/local/bin/ninja cmTC_ac06c && [1/2] Building C object CMakeFiles/cmTC_ac06c.dir/src.c.o
+FAILED: [code=1] CMakeFiles/cmTC_ac06c.dir/src.c.o 
+/root/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --target=armv7-none-linux-androideabi24 -DCMAKE_HAVE_LIBC_PTHREAD  -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -fexceptions  -O2 -g -DNDEBUG -std=gnu2x -MD -MT CMakeFiles/cmTC_ac06c.dir/src.c.o -MF CMakeFiles/cmTC_ac06c.dir/src.c.o.d -o CMakeFiles/cmTC_ac06c.dir/src.c.o -c /root/slip_android/slipstream-0.0.1/android/build-arm64/CMakeFiles/CMakeTmp/src.c
+/root/slip_android/slipstream-0.0.1/android/build-arm64/CMakeFiles/CMakeTmp/src.c:13:3: error: use of undeclared identifier 'pthread_cancel'; did you mean 'pthread_once'?
+   13 |   pthread_cancel(thread);
+      |   ^~~~~~~~~~~~~~
+      |   pthread_once
+/root/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/../sysroot/usr/include/pthread.h:264:5: note: 'pthread_once' declared here
+  264 | int pthread_once(pthread_once_t* _Nonnull __once, void (* _Nonnull __init_routine)(void));
+      |     ^
+/root/slip_android/slipstream-0.0.1/android/build-arm64/CMakeFiles/CMakeTmp/src.c:13:24: error: too few arguments to function call, expected 2, have 1
+   13 |   pthread_cancel(thread);
+      |   ~~~~~~~~~~~~~~       ^
+/root/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/../sysroot/usr/include/pthread.h:264:5: note: 'pthread_once' declared here
+  264 | int pthread_once(pthread_once_t* _Nonnull __once, void (* _Nonnull __init_routine)(void));
+      |     ^            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 errors generated.
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /root/slip_android/slipstream-0.0.1/android/build-arm64/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/local/bin/ninja cmTC_9f4ca && [1/2] Building C object CMakeFiles/cmTC_9f4ca.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_9f4ca
+FAILED: [code=1] cmTC_9f4ca 
+: && /root/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --target=armv7-none-linux-androideabi24 -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -fexceptions -DCHECK_FUNCTION_EXISTS=pthread_create -O2 -g -DNDEBUG -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--gc-sections -Qunused-arguments -Wl,--no-undefined  -Wl,--gc-sections CMakeFiles/cmTC_9f4ca.dir/CheckFunctionExists.c.o -o cmTC_9f4ca  -lpthreads   -latomic -lm && :
+ld.lld: error: unable to find library -lpthreads
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the function pthread_create exists in the pthread failed with the following output:
+Change Dir: /root/slip_android/slipstream-0.0.1/android/build-arm64/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/local/bin/ninja cmTC_76ca2 && [1/2] Building C object CMakeFiles/cmTC_76ca2.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_76ca2
+FAILED: [code=1] cmTC_76ca2 
+: && /root/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --target=armv7-none-linux-androideabi24 -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -fexceptions -DCHECK_FUNCTION_EXISTS=pthread_create -O2 -g -DNDEBUG -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--gc-sections -Qunused-arguments -Wl,--no-undefined  -Wl,--gc-sections CMakeFiles/cmTC_76ca2.dir/CheckFunctionExists.c.o -o cmTC_76ca2  -lpthread   -latomic -lm && :
+ld.lld: error: unable to find library -lpthread
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.
+
+
+
+Performing C SOURCE FILE Test CC_HAS_AESNI256 failed with the following output:
+Change Dir: /root/slip_android/slipstream-0.0.1/android/build-arm64/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/local/bin/ninja cmTC_20541 && [1/2] Building C object CMakeFiles/cmTC_20541.dir/src.c.o
+FAILED: [code=1] CMakeFiles/cmTC_20541.dir/src.c.o 
+/root/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --target=armv7-none-linux-androideabi24 -DCC_HAS_AESNI256  -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -fexceptions  -mavx2 -maes -mpclmul -mvaes -mvpclmulqdq -O2 -g -DNDEBUG -std=gnu2x -MD -MT CMakeFiles/cmTC_20541.dir/src.c.o -MF CMakeFiles/cmTC_20541.dir/src.c.o.d -o CMakeFiles/cmTC_20541.dir/src.c.o -c /root/slip_android/slipstream-0.0.1/android/build-arm64/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported option '-mavx2' for target 'armv7-none-linux-androideabi24'
+clang: error: unsupported option '-maes' for target 'armv7-none-linux-androideabi24'
+clang: error: unsupported option '-mpclmul' for target 'armv7-none-linux-androideabi24'
+clang: error: unsupported option '-mvaes' for target 'armv7-none-linux-androideabi24'
+clang: error: unsupported option '-mvpclmulqdq' for target 'armv7-none-linux-androideabi24'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+
+    #include <emmintrin.h>
+    #include <immintrin.h>
+    int main(void) {
+        __m256i  ord0, ord1, ord2, ord3 = _mm256_setzero_si256();
+        ord0 = _mm256_aesenc_epi128(ord1, ord2);
+        ord3 = _mm256_aesenclast_epi128(ord0, ord1);
+        ord1 = _mm256_clmulepi64_epi128(ord3, ord2, 0x00);
+        _mm_insert_epi64(_mm_setr_epi32(0, 1, 2, 3), 0, 0);
+        return 0;
+    }
+    

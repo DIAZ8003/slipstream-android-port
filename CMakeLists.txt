@@ -14,11 +14,15 @@ set(BUILD_LOGREADER OFF)
 
 set(BUILD_TESTING OFF)
 
+# Agregar picoquic
+add_subdirectory(extern/picoquic)
+
 set(PICOQUIC_ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C flags for picoquic")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
 endif()
+
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     list(APPEND PICOQUIC_COMPILE_DEFINITIONS BUILD_LOGLIB)
     set(BUILD_LOGLIB ON)
@@ -29,7 +33,6 @@ endif()
 if(POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
 endif()
-add_subdirectory(extern/picoquic)
 
 # Common source files for both client and server
 set(COMMON_SOURCES
@@ -64,14 +67,17 @@ add_executable(slipstream-client
         src/slipstream_client.c
         ${COMMON_SOURCES}
 )
+
 target_link_libraries(slipstream-client PRIVATE m)
 target_link_libraries(slipstream-client PRIVATE picoquic-core)
+
 if (BUILD_LOGLIB)
     target_link_libraries(slipstream-client PRIVATE picoquic-log)
 endif ()
+
 target_include_directories(slipstream-client PRIVATE include)
 target_include_directories(slipstream-client PRIVATE extern)
-set_picoquic_compile_settings(slipstream-client)
+target_include_directories(slipstream-client PRIVATE extern/picoquic)
 
 # Server binary
 add_executable(slipstream-server
@@ -80,11 +86,14 @@ add_executable(slipstream-server
         src/slipstream_server_cc.c
         ${COMMON_SOURCES}
 )
+
 target_link_libraries(slipstream-server PRIVATE m)
 target_link_libraries(slipstream-server PRIVATE picoquic-core)
+
 if (BUILD_LOGLIB)
     target_link_libraries(slipstream-server PRIVATE picoquic-log)
 endif ()
+
 target_include_directories(slipstream-server PRIVATE include)
 target_include_directories(slipstream-server PRIVATE extern)
-set_picoquic_compile_settings(slipstream-server)
+target_include_directories(slipstream-server PRIVATE extern/picoquic)
