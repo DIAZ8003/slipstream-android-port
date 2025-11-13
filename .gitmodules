@@ -1,6 +1,6 @@
 [submodule "extern/picoquic"]
 	path = extern/picoquic
-	url = git@github.com:EndPositive/picoquic.git
+	url = https://github.com/private-octopus/picoquic.git
 [submodule "extern/SPCDNS"]
 	path = extern/SPCDNS
 	url = git@github.com:spc476/SPCDNS.git
