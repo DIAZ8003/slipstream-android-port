@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 
+# ====== PICOTLS OVERRIDE (importantísimo) ======
+include(${CMAKE_CURRENT_SOURCE_DIR}/../picotls/CMakeLists.overrides.cmake OPTIONAL)
+
 project(picoquic
     VERSION 1.1.40.0
     DESCRIPTION "picoquic library"
@@ -17,12 +20,20 @@ set(ENABLE_MINICRYPTO ON CACHE BOOL "Enable Minicrypto backend" FORCE)
 set(PICOQUIC_DISABLE_AESNI ON CACHE BOOL "Disable AESNI" FORCE)
 set(ENABLE_TRACER OFF CACHE BOOL "Disable tracing" FORCE)
 
-# FORCE PTLS MINICRYPTO
+# ===== FORCE PICOTLS MINICRYPTO =====
 set(PTLS_USE_OPENSSL 0 CACHE BOOL "Do not use OpenSSL" FORCE)
 set(PTLS_USE_MBEDTLS 0 CACHE BOOL "Do not use mbedTLS" FORCE)
 set(PTLS_USE_MINICRYPTO 1 CACHE BOOL "Use Minicrypto only" FORCE)
 set(PTLS_USE_SYSTEM_OPENSSL 0 CACHE BOOL "No system OpenSSL" FORCE)
 set(PTLS_FUSION 0 CACHE BOOL "Disable Fusion" FORCE)
+
+# ===== EXTRA vars (picotls older versions) =====
+set(PTLS_WITH_OPENSSL 0 CACHE BOOL "Disable OpenSSL backend" FORCE)
+set(PTLS_WITH_MBEDTLS 0 CACHE BOOL "Disable mbedTLS backend" FORCE)
+set(PTLS_WITH_MINICRYPTO 1 CACHE BOOL "Enable Minicrypto backend" FORCE)
+set(PTLS_OPENSSL 0 CACHE BOOL "Disable OpenSSL" FORCE)
+set(PTLS_MBEDTLS 0 CACHE BOOL "Disable MbedTLS" FORCE)
+set(PTLS_MINICRYPTO 1 CACHE BOOL "Enable Minicrypto" FORCE)
 
 add_definitions(-DPICOQUIC_NO_OPENSSL)
 add_definitions(-DPICOQUIC_MINICRYPTO)
