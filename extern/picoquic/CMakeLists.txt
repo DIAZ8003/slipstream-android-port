@@ -21,8 +21,9 @@ set(ENABLE_TRACER OFF CACHE BOOL "Disable USDT/tracing")
 # Forzar minicrypto
 add_definitions(-DPICOQUIC_NO_OPENSSL)
 add_definitions(-DPICOQUIC_MINICRYPTO)
+add_definitions(-DPTLS_MINICRYPTO)
 
-# Evitar que picoquic busque OpenSSL
+# Evitar que picoquic intente usar OpenSSL
 set(OPENSSL_FOUND FALSE)
 set(OPENSSL_INCLUDE_DIR "")
 set(OPENSSL_CRYPTO_LIBRARY "")
@@ -68,6 +69,12 @@ set(PICOQUIC_SOURCES
 )
 
 # =======================
+# DESHABILITAR DIRECTORIOS INNECESARIOS
+# =======================
+set(PICOQUIC_SKIP_TESTS ON)
+set(PICOQUIC_SKIP_DEMOS ON)
+
+# =======================
 # LIBRERÍA
 # =======================
 add_library(picoquic-core STATIC ${PICOQUIC_SOURCES})
@@ -77,3 +84,11 @@ target_include_directories(picoquic-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/picoquic)
 
 target_link_libraries(picoquic-core PUBLIC Threads::Threads)
+
+# =======================
+# BLOQUE FINAL: EVITA find_package(OpenSSL)
+# =======================
+# Sobrescribe cualquier llamada heredada
+macro(find_package)
+    message(STATUS "find_package bloqueado para evitar OpenSSL")
+endmacro()
