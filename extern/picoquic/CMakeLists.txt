@@ -36,14 +36,10 @@ set(OPENSSL_LIBRARIES "" CACHE STRING "" FORCE)
 
 message(STATUS "Android build: OpenSSL disabled → Using Minicrypto only")
 
-# ------------------------------
-# THREADS
-# ------------------------------
-
 find_package(Threads REQUIRED)
 
 # ------------------------------
-# SOURCES
+# SOURCES (COMPLETOS)
 # ------------------------------
 
 set(PICOQUIC_SOURCES
@@ -51,6 +47,7 @@ set(PICOQUIC_SOURCES
     picoquic/bbr1.c
     picoquic/bytestream.c
     picoquic/cc_common.c
+    picoquic/cidset.c
     picoquic/config.c
     picoquic/cubic.c
     picoquic/ech.c
@@ -70,12 +67,15 @@ set(PICOQUIC_SOURCES
     picoquic/picohash.c
     picoquic/picoquic.c
     picoquic/picoquic_ptls_minicrypto.c
+    picoquic/sacks.c
+    picoquic/skip_frame.c
+    picoquic/ticket_store.c
+    picoquic/wrapper.c
 )
 
 # ------------------------------
 # LIBRARY
 # ------------------------------
-
 add_library(picoquic-core STATIC ${PICOQUIC_SOURCES})
 
 target_include_directories(picoquic-core PUBLIC
