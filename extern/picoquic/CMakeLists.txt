@@ -8,22 +8,38 @@ project(picoquic
 # THREADS
 find_package(Threads REQUIRED)
 
-# ==== DESACTIVAR TODO LO QUE ROMPE EN ANDROID ====
+# =======================
+# CONFIGURACIÓN ANDROID
+# =======================
 set(ENABLE_FUSION OFF CACHE BOOL "Disable Fusion on Android")
 set(ENABLE_OPENSSL OFF CACHE BOOL "Disable OpenSSL on Android")
 set(ENABLE_MBEDTLS OFF CACHE BOOL "Disable mbedTLS on Android")
 set(ENABLE_MINICRYPTO ON CACHE BOOL "Enable minicrypto on Android")
-
-# No intentar detectar AESNI (no existe en ARM/Android)
 set(PICOQUIC_DISABLE_AESNI ON CACHE BOOL "Disable AESNI on Android")
+set(ENABLE_TRACER OFF CACHE BOOL "Disable USDT/tracing")
 
-# No autoscan de USDT / tracers
-set(ENABLE_TRACER OFF)
+# Forzar minicrypto
+add_definitions(-DPICOQUIC_NO_OPENSSL)
+add_definitions(-DPICOQUIC_MINICRYPTO)
 
-# C flags para Android
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DANDROID -DPICOQUIC_NO_OPENSSL -DPICOQUIC_MINICRYPTO")
+# Evitar que picoquic busque OpenSSL
+set(OPENSSL_FOUND FALSE)
+set(OPENSSL_INCLUDE_DIR "")
+set(OPENSSL_CRYPTO_LIBRARY "")
+set(OPENSSL_SSL_LIBRARY "")
+set(OPENSSL_LIBRARIES "")
 
-# Archivos fuente
+# Evitar autodetecciones internas de picotls
+set(PTLS_WITH_FUSION 0)
+set(PTLS_WITH_OPENSSL 0)
+set(PTLS_WITH_MBEDTLS 0)
+set(PTLS_WITH_MINICRYPTO 1)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DANDROID -fPIC")
+
+# =======================
+# FUENTES
+# =======================
 set(PICOQUIC_SOURCES
     picoquic/bbr.c
     picoquic/bbr1.c
@@ -48,15 +64,16 @@ set(PICOQUIC_SOURCES
     picoquic/performance_log.c
     picoquic/picohash.c
     picoquic/picoquic.c
-    picoquic/picoquic_mbedtls.c
     picoquic/picoquic_ptls_minicrypto.c
 )
 
-# Biblioteca principal
+# =======================
+# LIBRERÍA
+# =======================
 add_library(picoquic-core STATIC ${PICOQUIC_SOURCES})
 
 target_include_directories(picoquic-core PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/picoquic)
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/picoquic)
 
 target_link_libraries(picoquic-core PUBLIC Threads::Threads)
