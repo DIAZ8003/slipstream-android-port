@@ -1,5 +1,3 @@
-cd /root/slip_android/slipstream-0.0.1
-cat > extern/picoquic/CMakeLists.txt <<'EOF'
 cmake_minimum_required(VERSION 3.13)
 
 project(picoquic
@@ -7,42 +5,41 @@ project(picoquic
     DESCRIPTION "picoquic library"
     LANGUAGES C CXX)
 
-# THREADS
-find_package(Threads REQUIRED)
+# -------------------------------------------
+# CONFIGURACIÓN ANDROID (SIN OPENSSL)
+# -------------------------------------------
 
-# =======================
-# CONFIGURACIÓN ANDROID
-# =======================
-set(ENABLE_FUSION OFF CACHE BOOL "Disable Fusion on Android")
-set(ENABLE_OPENSSL OFF CACHE BOOL "Disable OpenSSL on Android")
-set(ENABLE_MBEDTLS OFF CACHE BOOL "Disable mbedTLS on Android")
-set(ENABLE_MINICRYPTO ON CACHE BOOL "Enable minicrypto on Android")
-set(PICOQUIC_DISABLE_AESNI ON CACHE BOOL "Disable AESNI on Android")
-set(ENABLE_TRACER OFF CACHE BOOL "Disable USDT/tracing")
+set(ENABLE_FUSION OFF CACHE BOOL "Disable Fusion on Android" FORCE)
+set(ENABLE_OPENSSL OFF CACHE BOOL "Disable OpenSSL on Android" FORCE)
+set(ENABLE_MBEDTLS OFF CACHE BOOL "Disable mbedTLS on Android" FORCE)
+set(ENABLE_MINICRYPTO ON CACHE BOOL "Enable minicrypto backend" FORCE)
+
+set(PICOQUIC_DISABLE_AESNI ON CACHE BOOL "Disable AESNI (no x86 AES)" FORCE)
+set(ENABLE_TRACER OFF CACHE BOOL "Disable tracing on Android" FORCE)
 
 # Forzar minicrypto
 add_definitions(-DPICOQUIC_NO_OPENSSL)
 add_definitions(-DPICOQUIC_MINICRYPTO)
-add_definitions(-DPTLS_MINICRYPTO)
 
-# Evitar que picoquic intente usar OpenSSL
-set(OPENSSL_FOUND FALSE)
-set(OPENSSL_INCLUDE_DIR "")
-set(OPENSSL_CRYPTO_LIBRARY "")
-set(OPENSSL_SSL_LIBRARY "")
-set(OPENSSL_LIBRARIES "")
+# ----- BLOQUEAR OPENSSL -----
+set(OPENSSL_FOUND FALSE CACHE BOOL "No OpenSSL in Android" FORCE)
+set(OPENSSL_INCLUDE_DIR "" CACHE STRING "" FORCE)
+set(OPENSSL_CRYPTO_LIBRARY "" CACHE STRING "" FORCE)
+set(OPENSSL_SSL_LIBRARY "" CACHE STRING "" FORCE)
+set(OPENSSL_LIBRARIES "" CACHE STRING "" FORCE)
 
-# Evitar autodetecciones internas de picotls
-set(PTLS_WITH_FUSION 0)
-set(PTLS_WITH_OPENSSL 0)
-set(PTLS_WITH_MBEDTLS 0)
-set(PTLS_WITH_MINICRYPTO 1)
+# ----- BLOQUEAR PICOTLS OPENSSL -----
+set(PTLS_MINICRYPTO 1 CACHE BOOL "Enable minicrypto backend" FORCE)
+set(PTLS_OPENSSL 0 CACHE BOOL "Disable OpenSSL backend" FORCE)
+set(PTLS_MBEDTLS 0 CACHE BOOL "Disable mbedTLS backend" FORCE)
+set(PTLS_FUSION 0 CACHE BOOL "Disable Fusion" FORCE)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DANDROID -fPIC")
 
-# =======================
-# FUENTES
-# =======================
+# -------------------------------------------
+# FUENTES PICOQUIC SIN OPENSSL
+# -------------------------------------------
+
 set(PICOQUIC_SOURCES
     picoquic/bbr.c
     picoquic/bbr1.c
@@ -70,14 +67,15 @@ set(PICOQUIC_SOURCES
     picoquic/picoquic_ptls_minicrypto.c
 )
 
-# =======================
-# LIBRERÍA
-# =======================
+# -------------------------------------------
+# COMPILAR COMO LIBRERÍA
+# -------------------------------------------
+
 add_library(picoquic-core STATIC ${PICOQUIC_SOURCES})
 
 target_include_directories(picoquic-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/picoquic)
 
+find_package(Threads REQUIRED)
 target_link_libraries(picoquic-core PUBLIC Threads::Threads)
-EOF
