@@ -1,3 +1,5 @@
+cd /root/slip_android/slipstream-0.0.1
+cat > extern/picoquic/CMakeLists.txt <<'EOF'
 cmake_minimum_required(VERSION 3.13)
 
 project(picoquic
@@ -69,12 +71,6 @@ set(PICOQUIC_SOURCES
 )
 
 # =======================
-# DESHABILITAR DIRECTORIOS INNECESARIOS
-# =======================
-set(PICOQUIC_SKIP_TESTS ON)
-set(PICOQUIC_SKIP_DEMOS ON)
-
-# =======================
 # LIBRERÍA
 # =======================
 add_library(picoquic-core STATIC ${PICOQUIC_SOURCES})
@@ -84,11 +80,4 @@ target_include_directories(picoquic-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/picoquic)
 
 target_link_libraries(picoquic-core PUBLIC Threads::Threads)
-
-# =======================
-# BLOQUE FINAL: EVITA find_package(OpenSSL)
-# =======================
-# Sobrescribe cualquier llamada heredada
-macro(find_package)
-    message(STATUS "find_package bloqueado para evitar OpenSSL")
-endmacro()
+EOF
