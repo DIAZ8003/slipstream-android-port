@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.13)
 project(slipstream C)
 
+# ==== Disable OpenSSL globally (Android build uses Minicrypto) ====
+set(OPENSSL_USE_STATIC_LIBS OFF)
+set(OPENSSL_ROOT_DIR "")
+set(OPENSSL_INCLUDE_DIR "")
+set(OPENSSL_CRYPTO_LIBRARY "")
+set(PICOTLS_USE_OPENSSL OFF)
+set(PICOQUIC_USE_OPENSSL OFF)
+set(PTLS_USE_SYSTEM_OPENSSL OFF)
+
 set(CMAKE_C_STANDARD 23)
 
 set(PICOQUIC_FETCH_PTLS ON)
@@ -14,7 +23,7 @@ set(BUILD_LOGREADER OFF)
 
 set(BUILD_TESTING OFF)
 
-# Agregar picoquic
+# Agregar picoquic (ya sin OpenSSL)
 add_subdirectory(extern/picoquic)
 
 set(PICOQUIC_ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C flags for picoquic")
